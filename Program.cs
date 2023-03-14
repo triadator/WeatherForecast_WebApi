@@ -1,5 +1,8 @@
-var builder = WebApplication.CreateBuilder(args);
+using Web_Api.Interfaces;
+using Web_Api.OpenMeteo;
 
+var builder = WebApplication.CreateBuilder(args);
+builder.Services.AddScoped<IForecastProvider, OpenMeteoClient>();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();

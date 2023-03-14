@@ -1,19 +1,26 @@
 ﻿using System;
 using System.Text.Json;
 using System.Globalization;
+using System.Net.Http;
+using Web_Api.Interfaces;
 
 namespace Web_Api.OpenMeteo
 {
-    public class MeteoClient
+    public class OpenMeteoClient : IForecastProvider
     {
         
         private readonly string _weatherApiUrl = "https://api.open-meteo.com/v1/forecast";
         private readonly string _geocodeApiUrl = "https://geocoding-api.open-meteo.com/v1/search";
-       
-        private readonly HttpController httpController;
-        public MeteoClient()
+        public HttpClient Client { get { return _httpClient; } }
+        private readonly HttpClient _httpClient;
+        public OpenMeteoClient()
         {
-            httpController = new HttpController();
+            _httpClient = new HttpClient();
+            _httpClient.DefaultRequestHeaders.Accept.Clear();
+            _httpClient.DefaultRequestHeaders.Accept.Add(
+                new System.Net.Http.Headers.MediaTypeWithQualityHeaderValue("application/json")
+                );
+            _httpClient.DefaultRequestHeaders.UserAgent.ParseAdd("om-dotnet");
         }
         public async Task<GeocodingApiResponse?> GetLocationDataAsync(string location)
         {
@@ -21,7 +28,7 @@ namespace Web_Api.OpenMeteo
 
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_geocodeApiUrl, options));
+                HttpResponseMessage response = await Client.GetAsync(MergeUrlWithOptions(_geocodeApiUrl, options));
                 response.EnsureSuccessStatusCode();
 
                 GeocodingApiResponse? geocodingData = await JsonSerializer.DeserializeAsync<GeocodingApiResponse>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
@@ -41,7 +48,7 @@ namespace Web_Api.OpenMeteo
 
             try
             {
-                HttpResponseMessage response = await httpController.Client.GetAsync(MergeUrlWithOptions(_weatherApiUrl, options));
+                HttpResponseMessage response = await Client.GetAsync(MergeUrlWithOptions(_weatherApiUrl, options));
                 response.EnsureSuccessStatusCode();
                 WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
                 weatherForecast.LocationName = georesponse.Locations[0].Country;
@@ -167,5 +174,7 @@ namespace Web_Api.OpenMeteo
 
             return uri.ToString();
         }
+
+     
     }
 }

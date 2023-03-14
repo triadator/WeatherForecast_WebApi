@@ -21,10 +21,7 @@ namespace Web_Api.OpenMeteo
 
         [JsonPropertyName("timezone_abbreviation")]
         public string? TimezoneAbbreviation { get; set; }
-
-        [JsonPropertyName("current_weather")]
-        public CurrentWeather? CurrentWeather { get; set; }
-               
+                                      
         [JsonPropertyName("daily_units")]
         public Daily_Units? Daily_units { get; set; }
 
