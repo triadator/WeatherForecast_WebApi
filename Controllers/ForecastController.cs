@@ -1,3 +1,4 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Web_Api.Interfaces;
 using Web_Api.OpenMeteo;
@@ -5,6 +6,7 @@ using Web_Api.OpenMeteo;
 namespace Web_Api.Controllers
 {
     [Route("api/stats")]
+   // [Authorize]
     [ApiController]
     public class ForecastController : Controller
     {
