@@ -44,20 +44,16 @@ namespace Web_Api.OpenMeteo
         public async Task<WeatherForecast?> GetWeatherForecastAsync(string location)
         {
             GeocodingApiResponse? georesponse = await GetLocationDataAsync(location);
+            if (georesponse.Locations==null)
+            {
+                return new WeatherForecast() { LocationName = "Wrong location data"};
+            }
             WeatherForecastOptions options = new WeatherForecastOptions(georesponse.Locations[0].Latitude, georesponse.Locations[0].Longitude);
-
-            try
-            {
-                HttpResponseMessage response = await Client.GetAsync(MergeUrlWithOptions(_weatherApiUrl, options));
-                response.EnsureSuccessStatusCode();
-                WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
-                weatherForecast.LocationName = georesponse.Locations[0].Country;
-                return weatherForecast;
-            }
-            catch (HttpRequestException e)
-            {
-                return null;
-            }
+            HttpResponseMessage response = await Client.GetAsync(MergeUrlWithOptions(_weatherApiUrl, options));
+            WeatherForecast? weatherForecast = await JsonSerializer.DeserializeAsync<WeatherForecast>(await response.Content.ReadAsStreamAsync(), new JsonSerializerOptions() { PropertyNameCaseInsensitive = true });
+            weatherForecast.LocationName = georesponse.Locations[0].Country;
+             return weatherForecast;
+            
                     
         }
        //URL-Builder для Погоды
