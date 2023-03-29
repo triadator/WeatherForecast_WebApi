@@ -6,7 +6,7 @@ using Web_Api.OpenMeteo;
 namespace Web_Api.Controllers
 {
     [Route("api/stats")]
-    [Authorize]
+    //[Authorize]
     [ApiController]
     public class ForecastController : Controller
     {
