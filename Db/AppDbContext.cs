@@ -1,5 +1,6 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions;
+using Web_Api.OpenMeteo;
 using WebApi;
 
 namespace WebApi.Db
@@ -8,12 +9,12 @@ namespace WebApi.Db
     {
         public AppDbContext(DbContextOptions<AppDbContext> options) : base(options)
         {
-            Database.EnsureCreated();
-            bool canconnect = Database.CanConnect();
-
+            Database.EnsureDeleted();
+            Database.EnsureCreated();            
+            
         }
-
-        public DbSet<Person> People { get; set; }
+        public DbSet<User> Users { get; set; }
+  
 
     }
 }
