@@ -21,8 +21,7 @@ using System.Text;
 
 var builder = WebApplication.CreateBuilder(args);
  
-
-  builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer( config =>
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme).AddJwtBearer( config =>
 {
     config.TokenValidationParameters = new TokenValidationParameters()
     {
@@ -39,11 +38,9 @@ var builder = WebApplication.CreateBuilder(args);
 builder.Services.AddAuthorization();
 builder.Services.AddScoped<IForecastProvider, OpenMeteoClient>();
 builder.Services.AddControllers();
-
 builder.Services.AddSwaggerGen();
-
 builder.Services.AddDbContext<AppDbContext>(options =>
-options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+        options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
 
 var app = builder.Build();
 

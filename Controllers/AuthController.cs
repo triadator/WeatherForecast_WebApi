@@ -5,10 +5,12 @@ using Microsoft.IdentityModel.Tokens;
 using System.IdentityModel.Tokens.Jwt;
 using System.Text;
 using WebApi.Db;
+using Microsoft.Net.Http.Headers;
+using System.Net;
 
 namespace WebApi.Controllers
 {
-    [Route("api/[controller]")]
+    [Route("[controller]")]
     [ApiController]
     public class AuthController : Controller
     {
@@ -21,7 +23,7 @@ namespace WebApi.Controllers
         private User AuthenticateUser(User user)
         {
             User _user = null;
-            if (user.Login == "ad" && user.Password=="12345")
+            if (user.Login == "admin" && user.Password=="12345")
             {
                 _user = new User() { Login = "George" };
             }
@@ -41,17 +43,23 @@ namespace WebApi.Controllers
         }
         [AllowAnonymous]
         [HttpPost]
-        public IActionResult Login(User user)
+        //не работает FromHeader
+        public IActionResult Login([FromBody] User user)
         {
+
             IActionResult respons = Unauthorized();
             var _user = AuthenticateUser(user);
-            if (_user != null)
-            {
-                var token = GenerateToken(_user);
-                respons = Ok(new { token = token });
+            if (_user == null)
+            {                
+            return StatusCode(401);
             }
+            var token = GenerateToken(_user);
+            respons = Ok(new { token = token });
+            //HttpContext.Response.Cookies.Append("Authorization", $"Bearer {token}");
             return respons;
         }
 
+        
+        
     }
 }
